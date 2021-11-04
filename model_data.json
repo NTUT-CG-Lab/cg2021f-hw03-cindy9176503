@@ -1,0 +1,35 @@
+modellist = '[
+        {
+		"location":"models/mmd/01.pmx",
+        "line_locationx_1":0.25,
+        "line_locationy_1":8.24,
+        "line_locationx_2":0.53,
+        "line_locationy_2":8.01,
+        "line_locationx_3":0.72,
+        "line_locationy_3":8.25,
+        "line_locationx_4":0.60,
+        "line_locationy_4":8.40
+        },
+        {
+        "location":"models/mmd/kizunaai/kizunaai.pmx",
+        "line_locationx_1":0,
+        "line_locationy_1":0,
+        "line_locationx_2":0,
+        "line_locationy_2":0,
+        "line_locationx_3":0,
+        "line_locationy_3":0,
+        "line_locationx_4":0,
+        "line_locationy_4":0
+        },
+        {
+        "location":"models/mmd/『天宮こころ(Kokoro Amamiya)』/『天宮こころ(Kokoro Amamiya)』.pmx",
+        "line_locationx_1":0,
+        "line_locationy_1":0,
+        "line_locationx_2":0,
+        "line_locationy_2":0,
+        "line_locationx_3":0,
+        "line_locationy_3":0,
+        "line_locationx_4":0,
+        "line_locationy_4":0
+        }
+    ]';
