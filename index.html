@@ -95,15 +95,15 @@
 		let modelList;
 		let idx = 0;
 		let mouse = new THREE.Vector2();
-		let clickObjects=[];
+		let clickObjects = [];
 		let selected = null;
-
+		
 		Ammo().then(function (AmmoLib) {
 
 			Ammo = AmmoLib;
 
 			init();
-			animateStart();
+			animate(); //0=all
 		});
 
 		function init() {
@@ -226,45 +226,41 @@
 			camera5.updateProjectionMatrix();
 		}
 
-		let time = 0;
-		function animateStart() {
-			// time ++;
-			// if(time < 30) {
-				render();
-				requestAnimationFrame(animateStart); //循環render
-			// }
-		}
-		
+		let time = 30;
+		let renderCameraIdx = 0;
 		function animate() {
-			requestAnimationFrame(animate); //循環render
-			effect.render(scene, camera);
-			
+			time--;
+			if(time > 0) {
+				render(renderCameraIdx);
+				requestAnimationFrame(animate); //循環render
+			}
 		}
 
-		function render() {
+		function render(_idx) {
 			effect.clear();
 
 			effect.setViewport(0, 0, SCREEN_WIDTH / 2, SCREEN_HEIGHT);
-			effect.render(scene, camera);
+			if(_idx==1 || _idx ==0) effect.render(scene, camera);
 
 			effect.setViewport(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2);
-			effect.render(scene, camera2);
+			if(_idx==2 || _idx ==0) effect.render(scene, camera2);
 
 			effect.setViewport(SCREEN_WIDTH / 2 + SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2);
-			effect.render(scene, camera3);
+			if(_idx==3 || _idx ==0) effect.render(scene, camera3);
 
 			effect.setViewport(SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2);
-			effect.render(scene, camera4);
+			if(_idx==4 || _idx ==0) effect.render(scene, camera4);
 
 			effect.setViewport(SCREEN_WIDTH / 2 + SCREEN_WIDTH / 4, 0, SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2);
-			effect.render(scene, camera5);
+			if(_idx==5 || _idx ==0) effect.render(scene, camera5);
 		}
 
 		//Events
 		function ChangeRoles(e) {
 			if(e.key == 'a') {
 				//mesh.position.x += 15;
-				GetLinePos();
+				//GetLinePos();
+				GetEyesRotation();
 				// scene.remove(mesh);
 				// idx --;
 				// if(idx < 0) { idx = modelList.length - 1; }
@@ -298,6 +294,16 @@
 			DrawLines('ver', pos[0].x_right, pos[0].y_right, 0x00ff00);
 		}
 
+		function GetEyesRotation() {
+			let pos2 = JSON.parse(kizunaai_eyesRotation);
+
+			mesh.skeleton.bones[86].rotation.x = pos2[0].x_up;
+			mesh.skeleton.bones[86].rotation.y = pos2[0].y_up;
+			time = 30;
+			renderCameraIdx = 1;
+			animate();
+		}
+
 		function DrawLines(lineType, x, y, lineColor) {
 			const material = new THREE.LineBasicMaterial( { color: lineColor } );
 			const points = [];
@@ -326,8 +332,10 @@
 
 			var intersects = raycaster.intersectObjects(clickObjects);
 			selected = intersects[0];
-			mesh.skeleton.bones[86].rotation.x = selected.point.x;
-			mesh.skeleton.bones[86].rotation.y = selected.point.y;
+			// mesh.skeleton.bones[86].rotation.x = selected.point.x;
+			// mesh.skeleton.bones[86].rotation.y = selected.point.y;
+			// mesh.skeleton.bones[86].rotation.x = -0.2;
+			// mesh.skeleton.bones[86].rotation.y = 0;
 		}
 
 		addEventListener('mousemove', MoveRightEye);
