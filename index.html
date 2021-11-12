@@ -105,7 +105,6 @@
 		let isMoveEye = false;
 		
 		let eyesBoneIdx = [[88, 86], [51, 49], [86, 88]]; //right, left
-		let eyesSpace = [0.37, 0.48, 0.37];
 
 		let rotationData = [];
 		let eyesRotationArray = [];
@@ -197,7 +196,6 @@
 		}
 
 		function onWindowResize() {
-
 			SCREEN_WIDTH = window.innerWidth;
 			SCREEN_HEIGHT = window.innerHeight;
 			aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
@@ -367,20 +365,20 @@
 		}
 
 		function GetEyesRotation() {
-			rotationData.push(JSON.parse(kizunaai_eyesRotation)[0]);
-			rotationData.push(JSON.parse(KokoroAmamiya_eyesRotation)[0]);
-			rotationData.push(JSON.parse(物述有栖_eyesRotation)[0]);
-			
+			rotationData.push(JSON.parse(kizunaai_eyesRotation));
+			rotationData.push(JSON.parse(KokoroAmamiya_eyesRotation));
+			rotationData.push(JSON.parse(物述有栖_eyesRotation));
+			console.log();
 			for(let i = 0; i < 3; i ++) {
 				//eyesRotationArray[i:modelIdx][0:eyes number] 0:right eye 1:left eye
-				eyesRotationArray[i][0] = new THREE.Vector2(rotationData[i].x_down, rotationData[i].y_down); 
-				eyesRotationArray[i][1] = new THREE.Vector2(rotationData[i].x_down, rotationData[i].y_down);
-				eyesRotationArray[i][2] = new THREE.Vector2(rotationData[i].x_up, rotationData[i].y_up);
-				eyesRotationArray[i][3] = new THREE.Vector2(rotationData[i].x_up, rotationData[i].y_up);
-				eyesRotationArray[i][4] = new THREE.Vector2(rotationData[i].x_right, rotationData[i].y_right);
-				eyesRotationArray[i][5] = new THREE.Vector2(rotationData[i].x_right, rotationData[i].y_right);
-				eyesRotationArray[i][6] = new THREE.Vector2(rotationData[i].x_left, rotationData[i].y_left);
-				eyesRotationArray[i][7] = new THREE.Vector2(rotationData[i].x_left, rotationData[i].y_left);
+				eyesRotationArray[i][0] = new THREE.Vector2(rotationData[i][0].x_down, rotationData[i][0].y_down); 
+				eyesRotationArray[i][1] = new THREE.Vector2(rotationData[i][1].x_down, rotationData[i][1].y_down);
+				eyesRotationArray[i][2] = new THREE.Vector2(rotationData[i][0].x_up, rotationData[i][0].y_up);
+				eyesRotationArray[i][3] = new THREE.Vector2(rotationData[i][1].x_up, rotationData[i][1].y_up);
+				eyesRotationArray[i][4] = new THREE.Vector2(rotationData[i][0].x_right, rotationData[i][0].y_right);
+				eyesRotationArray[i][5] = new THREE.Vector2(rotationData[i][1].x_right, rotationData[i][1].y_right);
+				eyesRotationArray[i][6] = new THREE.Vector2(rotationData[i][0].x_left, rotationData[i][0].y_left);
+				eyesRotationArray[i][7] = new THREE.Vector2(rotationData[i][1].x_left, rotationData[i][1].y_left);
 			}			
 		}
 
@@ -443,6 +441,7 @@
 				mouseStart.y = -(e.clientY / renderer.domElement.clientHeight) * 2 + 1;
 				isMoveEye = true;			
 			}
+			// if (e.button == 2) { e.preventDefault(); }
 		}
 
 		function MoveEye_End(e) {
@@ -465,25 +464,44 @@
 					actionEyesIdx = 3;
 				}else if(actionEyesIdx == 4) {
 					eyesRotationArray[modelIdx][7].x = eyesRotationArray[modelIdx][4].x; 
-					eyesRotationArray[modelIdx][7].y = eyesRotationArray[modelIdx][4].y - eyesSpace[modelIdx]
+					eyesRotationArray[modelIdx][7].y = -eyesRotationArray[modelIdx][4].y;
 					actionEyesIdx = 7;
 				}else if(actionEyesIdx == 6) {
 					eyesRotationArray[modelIdx][5].x = eyesRotationArray[modelIdx][6].x; 
-					eyesRotationArray[modelIdx][5].y = eyesRotationArray[modelIdx][6].y + eyesSpace[modelIdx];
+					eyesRotationArray[modelIdx][5].y = -eyesRotationArray[modelIdx][6].y;
 					actionEyesIdx = 5;
 				}
 			}
 		}
 
 		function saveAsJson(e) {
-			if(e.key == 's') {
-				var blob = new Blob([JSON.stringify(eyesRotationArray[modelIdx])], {type: "./;charset=utf-8"});
+			if(e.key == 's') {			
+				let data = [];
+				for(let i = 0; i < 3; i ++) {
+					data.push({
+						modelName : modelList[i],
+						modelEyeRotationAngles : {
+							Right_X_negative_angle : -radians_to_degrees(eyesRotationArray[i][0].x),
+							Left_X_negative_angle : -radians_to_degrees(eyesRotationArray[i][1].x),
+							Right_X_positive_angle : -radians_to_degrees(eyesRotationArray[i][2].x),
+							Left_X_positive_angle : -radians_to_degrees(eyesRotationArray[i][3].x),
+							Right_Y_negative_angle : -radians_to_degrees(eyesRotationArray[i][4].y),
+							Left_Y_negative_angle : -radians_to_degrees(eyesRotationArray[i][5].y),
+							Right_Y_positive_angle : -radians_to_degrees(eyesRotationArray[i][6].y),
+							Left_Y_positive_angle : -radians_to_degrees(eyesRotationArray[i][7].y),
+						}
+					});
+				}
+				let blob = new Blob([JSON.stringify(data)], {type: "./;charset=utf-8"});	
 				saveAs(blob, "data.json");
 			}
 		}
 
+		function radians_to_degrees(radians) {
+			let pi = Math.PI;
+			return radians * (180/pi);
+		}
 
-		
 	</script>
 
 </body>
